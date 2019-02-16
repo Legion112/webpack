@@ -1,8 +1,9 @@
 'use strict';
-
 const Helper = require('./RepLogAppHelper');
+const $ = require('jquery');
+const swal = require('sweetalert2');
 
-(function(window, $, Routing, swal) {
+(function(window, Routing) {
 
     let HelperInstances = new WeakMap();
 
@@ -64,7 +65,7 @@ const Helper = require('./RepLogAppHelper');
 
             swal({
                 title: 'Delete this log?',
-                text: 'What? Did you not actually lift this?',
+                text: 'What? Did you not actually lift this???',
                 showCancelButton: true,
                 showLoaderOnConfirm: true,
                 preConfirm: () => this._deleteRepLog($link)
@@ -213,4 +214,4 @@ const Helper = require('./RepLogAppHelper');
 `;
 
     window.RepLogApp = RepLogApp;
-})(window, jQuery, Routing, swal);
+})(window, Routing);
