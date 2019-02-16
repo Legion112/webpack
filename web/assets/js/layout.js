@@ -4,6 +4,8 @@ require('bootstrap');
 // include this on every page to make sure Promise exists
 require('babel-polyfill');
 
+require('../css/main.css');
+
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 });
