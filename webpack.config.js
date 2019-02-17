@@ -1,12 +1,13 @@
 const path = require('path');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     mode: "development", // (or "production")
     entry: {
-        rep_log: './web/assets/js/rep_log.js',
-        login: './web/assets/js/login.js',
-        layout: './web/assets/js/layout.js'
+        rep_log: './assets/js/rep_log.js',
+        login: './assets/js/login.js',
+        layout: './assets/js/layout.js'
     },
     output: {
         path:  path.resolve(__dirname, 'web', 'build'),
@@ -35,13 +36,23 @@ module.exports = {
             {
                 test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name]-[hash:6].[ext]'
+                        }
+                    }
                 ]
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name]-[hash:6].[ext]'
+                        }
+                    }
                 ]
             }
         ]
@@ -50,6 +61,13 @@ module.exports = {
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
             $: 'jquery'
-        })
+        }),
+        new CopyWebpackPlugin([
+            // copies to {output}/static
+            {
+                from: './assets/static',
+                to: 'static',
+            },
+        ]),
     ]
 };
