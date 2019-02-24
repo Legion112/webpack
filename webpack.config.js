@@ -1,12 +1,16 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const useVersioning = true;
 const useDevServer = false;
 const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
 const isProduction = process.env.NODE_ENV === 'production';
+console.log(isProduction);
 const useSourcemaps = !isProduction;
 
 const styleLoader = {
@@ -18,7 +22,6 @@ const styleLoader = {
 };
 
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const cssLoader = {
     loader: 'css-loader',
     options: {
@@ -47,7 +50,7 @@ const webpackConfig = {
     },
     output: {
         path:  path.resolve(__dirname, 'web', 'build'),
-        filename: useVersioning ? "[name].[hash:6].js" : "[name].js",
+        filename: useVersioning ? "[name].[chunkhash:6].js" : "[name].js",
         publicPath: publicPath
     },
     module: {
@@ -136,7 +139,11 @@ const webpackConfig = {
         new ManifestPlugin({
             writeToFileEmit: true,
             basePath: 'build/'
-        })
+        }),
+        // allows for [chunkhash]
+        new WebpackChunkHash(),
+        isProduction ? new webpack.HashedModuleIdsPlugin() : new webpack.NamedModulesPlugin(),
+        new CleanWebpackPlugin('web/build/**/*.*')
     ],
     devtool: useSourcemaps ? 'inline-source-map' : false,
     devServer: {
