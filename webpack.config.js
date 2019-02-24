@@ -27,7 +27,7 @@ const resolveUrlLoader = {
 };
 
 module.exports = {
-    mode: "development", // (or "production")
+    // mode: "development", // (or "production")
     entry: {
         rep_log: './assets/js/rep_log.js',
         login: './assets/js/login.js',
@@ -103,6 +103,19 @@ module.exports = {
                 to: 'static',
             },
         ]),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: [
+                // layout is an entry file
+                // anything including in layout, is not included in
+                'layout',
+                // dumps the manifest in a separate file
+                'manifest',
+            ],
+            minChunks: Infinity
+        }),
     ],
-    devtool: 'inline-source-map'
+    // devtool: 'inline-source-map',
+    // performance: {
+    //     hints: 'warning'
+    // }
 };
