@@ -30,7 +30,7 @@ const useDevServer = false;
 const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
 
 
-module.exports = {
+const webpackConfig = {
     // mode: "development", // (or "production")
     entry: {
         rep_log: './assets/js/rep_log.js',
@@ -133,3 +133,9 @@ module.exports = {
     //     hints: 'warning'
     // }
 };
+if (process.env.NODE_ENV === 'production') {
+    webpackConfig.plugins.push(
+        new webpack.optimize.UglifyJsPlugin()
+    )
+}
+module.exports = webpackConfig;
