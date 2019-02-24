@@ -7,6 +7,7 @@ const styleLoader = {
         sourceMap: true,
     }
 };
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const cssLoader = {
     loader: 'css-loader',
     options: {
@@ -25,7 +26,7 @@ const resolveUrlLoader = {
         sourceMap: true,
     }
 };
-const useDevServer = true;
+const useDevServer = false;
 const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
 
 
@@ -55,19 +56,24 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    styleLoader,
-                    cssLoader
-                ]
+                use: ExtractTextPlugin.extract({
+                    use: [
+                        cssLoader
+                    ],
+                    // use this if isn't extracted
+                    fallback: styleLoader
+                })
             },
             {
                 test: /\.scss$/,
-                use: [
-                    styleLoader,
-                    cssLoader,
-                    resolveUrlLoader,
-                    sassLoader
-                ]
+                use: ExtractTextPlugin.extract({
+                    use: [
+                        cssLoader,
+                        resolveUrlLoader,
+                        sassLoader,
+                    ],
+                    fallback: styleLoader,
+                })
             },
             {
                 test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
@@ -116,6 +122,7 @@ module.exports = {
             ],
             minChunks: Infinity
         }),
+        new ExtractTextPlugin('[name].css')
     ],
     devtool: 'inline-source-map',
     devServer: {
