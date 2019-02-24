@@ -10,7 +10,6 @@ const useVersioning = true;
 const useDevServer = false;
 const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
 const isProduction = process.env.NODE_ENV === 'production';
-console.log(isProduction);
 const useSourcemaps = !isProduction;
 
 const styleLoader = {
