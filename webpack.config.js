@@ -1,17 +1,26 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const useDevServer = false;
+const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
+const isProduction = process.env.NODE_ENV === 'production';
+const useSourcemaps = !isProduction;
+
 const styleLoader = {
     loader: 'style-loader',
     options: {
-        sourceMap: true,
+        sourceMap: useSourcemaps,
+        minimize: isProduction
     }
 };
+
+
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const cssLoader = {
     loader: 'css-loader',
     options: {
-        sourceMap: true,
+        sourceMap: useSourcemaps,
     }
 };
 const sassLoader = {
@@ -23,12 +32,9 @@ const sassLoader = {
 const resolveUrlLoader = {
     loader: 'resolve-url-loader',
     options: {
-        sourceMap: true,
+        sourceMap: useSourcemaps,
     }
 };
-const useDevServer = false;
-const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
-
 
 const webpackConfig = {
     // mode: "development", // (or "production")
@@ -124,7 +130,7 @@ const webpackConfig = {
         }),
         new ExtractTextPlugin('[name].css')
     ],
-    devtool: 'inline-source-map',
+    devtool: useSourcemaps ? 'inline-source-map' : false,
     devServer: {
         contentBase: './web',
         headers: { 'Access-Control-Allow-Origin': '*' }
@@ -133,9 +139,24 @@ const webpackConfig = {
     //     hints: 'warning'
     // }
 };
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
     webpackConfig.plugins.push(
         new webpack.optimize.UglifyJsPlugin()
+    );
+
+    webpackConfig.plugins.push(
+        // passes there options to all loaders
+        // but we should really pass these ourselves
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false
+        })
+    );
+
+    webpackConfig.plugins.push(
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        })
     )
 }
 module.exports = webpackConfig;

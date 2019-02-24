@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev webpack",
     "watch": "cross-env NODE_ENV=dev webpack --watch",
-    "production": "cross-env NODE_ENV=prodaction webpack"
+    "production": "cross-env NODE_ENV=production webpack"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
