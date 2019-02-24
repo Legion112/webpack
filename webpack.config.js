@@ -1,7 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
+const useVersioning = true;
 const useDevServer = false;
 const publicPath = useDevServer ? 'http://localhost:8080/build/' : '/build/';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -45,7 +47,7 @@ const webpackConfig = {
     },
     output: {
         path:  path.resolve(__dirname, 'web', 'build'),
-        filename: "[name].js",
+        filename: useVersioning ? "[name].[hash:6].js" : "[name].js",
         publicPath: publicPath
     },
     module: {
@@ -128,7 +130,13 @@ const webpackConfig = {
             ],
             minChunks: Infinity
         }),
-        new ExtractTextPlugin('[name].css')
+        new ExtractTextPlugin(
+            useVersioning ? '[name].[contenthash:6].css' : '[name].css'
+        ),
+        new ManifestPlugin({
+            writeToFileEmit: true,
+            basePath: 'build/'
+        })
     ],
     devtool: useSourcemaps ? 'inline-source-map' : false,
     devServer: {
@@ -157,6 +165,7 @@ if (isProduction) {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production')
         })
-    )
+    );
+
 }
 module.exports = webpackConfig;
